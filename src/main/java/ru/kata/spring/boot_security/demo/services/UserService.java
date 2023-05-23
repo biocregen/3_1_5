@@ -20,7 +20,7 @@ public interface UserService extends UserDetailsService {
 
     void updateUser(User user);
 
-    List<User> getAllUser();
+    List<User> getAllUsers();
 
     User getById(int id);
     User getByUsername(String name);
