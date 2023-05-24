@@ -1,7 +1,5 @@
 package ru.kata.spring.boot_security.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,10 +22,10 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
+    @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private  Set<Role> roleList = new HashSet<>();
+    private  Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -37,7 +35,7 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.roleList = roleList;
+        this.roles = roleList;
     }
 
     public User(int id, String username, String password, String email) {
@@ -86,7 +84,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoleList();
+        return getRoles();
     }
 
     @Override
@@ -106,12 +104,12 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Set<Role> getRoleList() {
-        return roleList;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRoleList(Set<Role> roleList) {
-        this.roleList = roleList;
+    public void setRoles(Set<Role> roleList) {
+        this.roles = roleList;
     }
 
     @Override
@@ -121,7 +119,7 @@ public class User implements UserDetails {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", roleList=" + roleList +
+                ", roleList=" + roles +
                 '}';
     }
 
@@ -131,7 +129,7 @@ public class User implements UserDetails {
 
     public String roleListToString() {
         StringBuilder sb = new StringBuilder();
-        for(Role role : roleList) {
+        for(Role role : roles) {
             sb.append(role.toString()).append(",");
         }
         return sb.toString().isEmpty() ? "" : sb.toString().substring(0, sb.length() - 1);

@@ -14,7 +14,6 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,12 +34,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty())
-            throw new UsernameNotFoundException("User not found!");
-        return new org.springframework.security.core.userdetails.User(user.get().getUsername(),
-                user.get().getPassword(),
-                mapRolesToAuthorities(user.get().getRoleList()));
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+        User user = optionalUser.get();
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
     @Override
     public User getByUsername(String name) {
@@ -50,6 +52,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return;
+        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
