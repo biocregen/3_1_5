@@ -23,13 +23,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin")
 public class AdminController {
     private final UserService userService;
-    private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService, ModelMapper modelMapper) {
+    public AdminController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
-        this.roleService = roleService;
         this.modelMapper = modelMapper;
     }
 
@@ -74,10 +72,6 @@ public class AdminController {
         return modelMapper.map(userDTO, User.class);
     }
 
-
-    public UserDTO convertToUserDto(User user) {
-        return modelMapper.map(user, UserDTO.class);
-    }
 
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {

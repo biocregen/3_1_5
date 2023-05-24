@@ -22,9 +22,8 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-
     }
 
     @GetMapping("/viewUser")
